@@ -17,7 +17,6 @@ This project builds an infrastructure-as-code security baseline that:
 - Sends automated security alerts through SNS
 - Validates detections using controlled AWS API events
 
-
 ## Architecture
 
 ```mermaid
@@ -38,7 +37,6 @@ flowchart TD
 
     I --> J[Email Notification]
 ```
-
 
 ## Security Controls
 
@@ -101,7 +99,7 @@ The detection pipeline was validated using controlled AWS API activity rather th
 
 A controlled `UpdateTrail` API call was executed against the existing trail while preserving the secure configuration.
 
-Result:
+**Result:**
 
 - CloudTrail recorded the event
 - CloudWatch Logs ingested the event
@@ -114,7 +112,7 @@ Result:
 
 A disposable IAM role was created specifically for security testing. The AWS-managed `CloudWatchReadOnlyAccess` policy was temporarily attached to generate a real `AttachRolePolicy` event.
 
-Result:
+**Result:**
 
 - CloudTrail recorded the IAM change
 - The `IAMPrivilegeChangeDetected` filter matched the event
@@ -142,11 +140,12 @@ Receive SNS email alert
 Clean up test change
   ↓
 Verify no Terraform drift
+```
 
 ## Project Structure
 
 ```text
-aws-secure-baseline-terraform/
+aws-threat-detection-terraform/
 ├── providers.tf      # Terraform and AWS provider configuration
 ├── s3.tf             # Secure S3 audit log bucket and bucket policies
 ├── cloudtrail.tf     # Multi-Region CloudTrail configuration
@@ -156,8 +155,11 @@ aws-secure-baseline-terraform/
 ├── alerts.tf         # SNS security alerting configuration
 ├── variables.tf      # Input variables for sensitive/runtime values
 ├── test-role.tf      # Disposable IAM role used for detection testing
+├── docs/
+│   └── evidence/     # Sanitized detection validation screenshots
 ├── .gitignore        # Excludes Terraform state and generated files
 └── README.md
+```
 
 ## Detection Evidence
 
@@ -174,3 +176,18 @@ A controlled `UpdateTrail` API call triggered the CloudTrail tampering detection
 A controlled `AttachRolePolicy` event on a disposable IAM test role triggered the IAM privilege-change detection and transitioned the CloudWatch alarm from `OK` to `ALARM`.
 
 ![IAM privilege change alert](docs/evidence/iam-privilege-change-alert.png)
+
+## Skills Demonstrated
+
+- Terraform infrastructure as code
+- AWS CloudTrail audit logging
+- Amazon S3 security controls
+- CloudWatch Logs and custom metrics
+- CloudWatch security alarms
+- Amazon SNS alerting
+- IAM roles and least-privilege permissions
+- Cloud security detection engineering
+- AWS API activity analysis
+- Controlled security testing
+- Infrastructure validation and drift detection
+- Git and GitHub version control
