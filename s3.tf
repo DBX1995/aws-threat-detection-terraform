@@ -7,6 +7,7 @@ resource "aws_s3_bucket" "security_logs" {
     ManagedBy   = "Terraform"
   }
 }
+data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket_public_access_block" "security_logs" {
   bucket = aws_s3_bucket.security_logs.id
@@ -55,6 +56,42 @@ resource "aws_s3_bucket_policy" "security_logs" {
         Condition = {
           Bool = {
             "aws:SecureTransport" = "false"
+          }
+        }
+      },
+      {
+        Sid    = "AWSCloudTrailAclCheck"
+        Effect = "Allow"
+
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+
+        Action   = "s3:GetBucketAcl"
+        Resource = aws_s3_bucket.security_logs.arn
+
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "arn:aws:cloudtrail:us-east-1:${data.aws_caller_identity.current.account_id}:trail/dbx-security-audit-trail"
+          }
+        }
+      },
+      {
+        Sid    = "AWSCloudTrailWrite"
+        Effect = "Allow"
+
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+
+        Action = "s3:PutObject"
+
+        Resource = "${aws_s3_bucket.security_logs.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl"  = "bucket-owner-full-control"
+            "AWS:SourceArn" = "arn:aws:cloudtrail:us-east-1:${data.aws_caller_identity.current.account_id}:trail/dbx-security-audit-trail"
           }
         }
       }
