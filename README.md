@@ -158,3 +158,19 @@ aws-secure-baseline-terraform/
 ├── test-role.tf      # Disposable IAM role used for detection testing
 ├── .gitignore        # Excludes Terraform state and generated files
 └── README.md
+
+## Detection Evidence
+
+The following alerts were generated from controlled AWS API activity and confirm that the detection pipeline worked end-to-end.
+
+### CloudTrail Tampering Detection
+
+A controlled `UpdateTrail` API call triggered the CloudTrail tampering detection and transitioned the CloudWatch alarm from `OK` to `ALARM`.
+
+![CloudTrail tampering alert](docs/evidence/cloudtrail-tampering-alert.png)
+
+### IAM Privilege Change Detection
+
+A controlled `AttachRolePolicy` event on a disposable IAM test role triggered the IAM privilege-change detection and transitioned the CloudWatch alarm from `OK` to `ALARM`.
+
+![IAM privilege change alert](docs/evidence/iam-privilege-change-alert.png)
